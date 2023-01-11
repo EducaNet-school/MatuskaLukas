@@ -17,7 +17,7 @@ function validateForm() {
 
         if (empty($name)) {
             echo "<p style='color: red;'>Jméno a příjmení musí být vyplněno!</p>";
-        } else if(count(explode(" ", $name)) < 2) {
+        } else if(str_word_count($name) < 2) {
             echo "<p style='color: red;'>Zadejte prosím jméno i příjmení</p>";
         } 
 
