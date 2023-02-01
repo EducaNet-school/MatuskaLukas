@@ -1,101 +1,98 @@
-<?php
-class GeometryCalculator {
-    private $shape;
-
-    public function setShape($shape) {
-        $this->shape = $shape;
-    }
-
-    public function calculateArea() {
-        if ($this->shape == "ctverec") {
-            return pow($_POST['side'], 2);
-        } else if ($this->shape == "obdelnik") {
-            return $_POST['length'] * $_POST['width'];
-        } else if ($this->shape == "trojuhelnik") {
-            if(isset($_POST['side1']) && isset($_POST['side2'])) {
-                if($_POST['side1'] > $_POST['side2'] OR $_POST['side1'] == $_POST['side2']) {
-                    $p = ($_POST['side1'] + $_POST['side2'] + $_POST['side2']) / 2;
-                    return sqrt($p * ($p - $_POST['side1']) * ($p - $_POST['side2']) * ($p - $_POST['side2']));
-                } else {
-                    $p = ($_POST['side1'] + $_POST['side2'] + $_POST['side2']) / 2;
-                    return sqrt($p * ($p - $_POST['side1']) * ($p - $_POST['side2']) * ($p - $_POST['side2']));
-            }
-        }
-    }
-}
-    public function calculatePerimeter() {
-        if ($this->shape == "ctverec") {
-            return 4 * $_POST['side'];
-        } else if ($this->shape == "obdelnik") {
-            return 2 * ($_POST['length'] + $_POST['width']);
-        } else if ($this->shape == "trojuhelnik") {
-            if(isset($_POST['side1']) && isset($_POST['side2']))
-                if($_POST['side1'] > $_POST['side2'] OR $_POST['side1'] == $_POST['side2']) {
-                    return 2 * $_POST['side1'] + $_POST['side2'];
-                } else {
-                    return 2 * $_POST['side2'] + $_POST['side1'];
-                }
-        }
-    }
-
-}
-
-$calculator = new GeometryCalculator();
-
-if (isset($_POST['shape'])) {
-    $calculator->setShape($_POST['shape']);
-    $area = $calculator->calculateArea();
-    $perimeter = $calculator->calculatePerimeter();
-}
-?>
 <form method="post">
-    <input type="radio" name="shape" value="ctverec" onclick="showCtverecForm()"> čtverec
-    <input type="radio" name="shape" value="obdelnik" onclick="showObdelnikForm()"> obdelník
-    <input type="radio" name="shape" value="trojuhelnik" onclick="showTrojuhelnikForm()"> trojúhelník
-    <br>
-    <br>
-    <div id="ctverec-form" style="display:none;">
-        Strana: <input type="text" name="side">
-    </div>
-    <div id="obdelnik-form" style="display:none;">
-        Délka: <input type="text" name="length">
-        Šířka: <input type="text" name="width">
-    </div>
-    <div id="trojuhelnik-form" style="display:none;">
-        Strana 1: <input type="text" name="side1">
-        Strana 2: <input type="text" name="side2">
-    </div>
-    <br>
-    <input type="submit" value="Vypočítej">
-</form>
-<script>
-    function showCtverecForm() {
-        document.getElementById("ctverec-form").style.display = "block";
-        document.getElementById("obdelnik-form").style.display = "none";
-        document.getElementById("trojuhelnik-form").style.display = "none";
-    }
+  <label for="input1">Zadejte první hodnotu:</label>
+  <input type="text" name="input1"><br><br>
+  
+  <label for="input2">Zadejte druhou hodnotu:</label>
+  <input type="text" name="input2"><br><br>
+  
+  <input type="submit" value="Odeslat" name="submit">
+</form> 
 
-    function showObdelnikForm() {
-    document.getElementById("ctverec-form").style.display = "none";
-    document.getElementById("obdelnik-form").style.display = "block";
-    document.getElementById("trojuhelnik-form").style.display = "none";
-    }
-
-    function showTrojuhelnikForm() {
-        document.getElementById("ctverec-form").style.display = "none";
-        document.getElementById("obdelnik-form").style.display = "none";
-        document.getElementById("trojuhelnik-form").style.display = "block";
-    }
-
-</script>
 
 <?php
+class Square {
+    private $side;
 
-    if (isset($area)) {
-        echo "Obsah: " . $area . "<br>";
+    public function __construct($side) {
+        $this->side = $side;
     }
-    if (isset($perimeter)) {
-        echo "Obvod: " . $perimeter;
+
+    public function getArea() {
+        return pow($this->side, 2);
     }
+
+    public function getPerimeter() {
+        return 4 * $this->side;
+    }
+}
+
+class Rectangle {
+    private $length;
+    private $width;
+
+    public function __construct($length, $width) {
+        $this->length = $length;
+        $this->width = $width;
+    }
+
+    public function getArea() {
+        return $this->length * $this->width;
+    }
+
+    public function getPerimeter() {
+        return 2 * ($this->length + $this->width);
+    }
+}
+
+class Triangle {
+    private $side1;
+    private $side2;
+
+    public function __construct($side1, $side2) {
+        $this->side1 = $side1;
+        $this->side2 = $side2;
+    }
+
+    public function getArea() {
+        $p = ($this->side1 + $this->side2 + $this->side2) / 2;
+        return sqrt($p * ($p - $this->side1) * ($p - $this->side2) * ($p - $this->side2));
+    }
+
+    public function getPerimeter() {
+        return $this->side1 + $this->side2 + sqrt(pow($this->side1, 2) + pow($this->side2, 2));
+    }
+}
+    $squareArea = 0;
+    $squarePerimeter = 0;
+    $rectangleArea = 0;
+    $rectanglePerimeter = 0;
+    $triangleArea = 0;
+    $trianglePerimeter = 0;
+
+    if (isset($_POST["submit"])) {
+        $square = new Square($_POST["input1"]);
+        $rectangle = new Rectangle($_POST["input1"], $_POST["input2"]);
+        $triangle = new Triangle($_POST["input1"], $_POST["input2"]);
+    
+        $squareArea = $square->getArea();
+        $rectangleArea = $rectangle->getArea();
+        $triangleArea = $triangle->getArea();
+    
+        $squarePerimeter = $square->getPerimeter();
+        $rectanglePerimeter = $rectangle->getPerimeter();
+        $trianglePerimeter = $triangle->getPerimeter();
+
+}
 
 ?>
+
+<h2>Výsledky</h2>
+
+        <p>Obsah čtverce: <?php echo $squareArea; ?></p>
+        <p>Obvod čtverce: <?php echo $squarePerimeter; ?></p>
+        
+        <p>Obsah obdélníku: <?php echo $rectangleArea; ?></p>
+        <p>Obvod obdélníku: <?php echo $rectanglePerimeter; ?></p>
+        
+        <p>Obsah trojúhelníku: <?php echo $triangleArea; ?></p>
+        <p>Obvod trojúhelníku: <?php echo $trianglePerimeter; ?></p>
